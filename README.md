@@ -1,0 +1,1 @@
+Testing with graphics using the terminal
