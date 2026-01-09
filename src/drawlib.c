@@ -1,77 +1,53 @@
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/ioctl.h>
-
 #include "drawlib.h"
 
 #define ASPECT_Y 0.5
 
 struct winsize get_screen_size(void) {
-  struct winsize ws;
-  ioctl(1, TIOCGWINSZ, &ws);
-  return ws;
+    struct winsize ws;
+    ioctl(1, TIOCGWINSZ, &ws);
+    return ws;
 }
 
 void put_pixel(int x, int y) {
-  int px = (int)(x + 0.5);
-  int py = (int)(y * ASPECT_Y + 0.5);
-  printf("\033[%d;%dH█", py, px);
+    printf("\033[%d;%dH█", (int)(y * ASPECT_Y + 0.5), (int)(x + 0.5));
 }
 
 void draw_line(vec2d a, vec2d b) {
-  double dx = b.x - a.x;
-  double dy = b.y - a.y;
-  double steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
+    double dx = b.x - a.x, dy = b.y - a.y;
+    double steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
+    if (steps == 0) return;
 
-  if (steps == 0)
-    return;
-
-  double stepX = dx / steps;
-  double stepY = dy / steps;
-
-  double x = a.x;
-  double y = a.y;
-
-  for (int i = 0; i <= steps; i++) {
-    put_pixel(x, y);
-    x += stepX;
-    y += stepY;
-  }
+    double x = a.x, y = a.y;
+    for (int i = 0; i <= steps; i++) {
+        put_pixel(x, y);
+        x += dx / steps;
+        y += dy / steps;
+    }
 }
 
-void draw_polyline(vec2d points[], int size) {
-  for (int i = 0; i < size - 1; i++) {
-    draw_line(points[i], points[i + 1]);
-  }
+void rotate3D(vec3d p, vec3d *out, double angleX, double angleY) {
+    double radX = angleX * M_PI / 180.0;
+    double radY = angleY * M_PI / 180.0;
+    vec3d t = p;
+
+    // X-Axis Rotation
+    double y = t.y * cos(radX) - t.z * sin(radX);
+    double z = t.y * sin(radX) + t.z * cos(radX);
+    t.y = y; t.z = z;
+
+    // Y-Axis Rotation
+    double x = t.x * cos(radY) + t.z * sin(radY);
+    t.z = -t.x * sin(radY) + t.z * cos(radY);
+    t.x = x;
+
+    *out = t;
 }
 
-void draw_polygon(vec2d points[], int size) {
-  for (int i = 0; i < size - 1; i++) {
-    draw_line(points[i], points[i + 1]);
-  }
-  draw_line(points[size - 1], points[0]);
-}
-
-void rotate2D(vec2d points[], vec2d out[], int size, int deg) {
-  double rad = (double)deg * M_PI / 180.0;
-
-  double cx = 0, cy = 0;
-  for (int i = 0; i < size; i++) {
-    cx += points[i].x;
-    cy += points[i].y;
-  }
-
-  cx /= size;
-  cy /= size;
-
-  for (int i = 0; i < size; i++) {
-    double arrx = points[i].x - cx;
-    double arry = points[i].y - cy;
-
-    out[i].x = cos(rad) * arrx - sin(rad) * arry + cx;
-    out[i].y = sin(rad) * arrx + cos(rad) * arry + cy;
-  }
+vec2d project(vec3d p, int width, int height) {
+    double factor = (width * 0.5) / (p.z + 100.0);
+    return (vec2d){ (p.x * factor) + (width / 2.0), (p.y * factor) + (height / 2.0) };
 }
 
 void clear_screen(void) { printf("\033[2J"); }

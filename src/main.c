@@ -3,21 +3,34 @@
 #include <unistd.h>
 
 int main(void) {
-  vec2d square[] = {{30, 30}, {60, 30}, {60, 60}, {30, 60}};
-  int size = sizeof(square) / sizeof(vec2d);
+    vec3d vertices[] = {
+        {-20,-20,-20}, {20,-20,-20}, {20,20,-20}, {-20,20,-20},
+        {-20,-20, 20}, {20,-20, 20}, {20,20, 20}, {-20,20, 20}
+    };
+    Edge edges[] = {
+        {0,1}, {1,2}, {2,3}, {3,0}, {4,5}, {5,6}, 
+        {6,7}, {7,4}, {0,4}, {1,5}, {2,6}, {3,7}
+    };
 
-  hide_cursor();
+    double aX = 0, aY = 0;
+    hide_cursor();
 
-  // animation
-  vec2d tranformed[size];
-  for (int i = 0; i < 360; i++) {
-    clear_screen();
-    rotate2D(square, tranformed, size, i);
-    draw_polygon(tranformed, size);
-    fflush(stdout);
-    usleep(30000);
-  }
+    while (1) {
+        clear_screen();
+        struct winsize ws = get_screen_size();
+        vec3d rot_v[8];
 
-  show_cursor();
-  return 0;
+        for (int i = 0; i < 8; i++) 
+            rotate3D(vertices[i], &rot_v[i], aX, aY);
+
+        for (int i = 0; i < 12; i++) {
+            draw_line(project(rot_v[edges[i].a], ws.ws_col, ws.ws_row),
+                      project(rot_v[edges[i].b], ws.ws_col, ws.ws_row));
+        }
+
+        aX += 1.5; aY += 0.8;
+        fflush(stdout);
+        usleep(30000);
+    }
+    return 0;
 }
