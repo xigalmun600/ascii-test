@@ -1,0 +1,10 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/alumno/Programacion/Proyecto/ascii-test/build",
+            "binaryPath": "/home/alumno/Programacion/Proyecto/ascii-test/build/out",
+            "binaryArgs": []
+        }
+    ],
+    "makefile.makefilePath": "makefile"
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-Isrc",
+      "-c",
+      "-o",
+      "build/drawlib.o",
+      "src/drawlib.c"
+    ],
+    "directory": "/home/alumno/Programacion/Proyecto/ascii-test",
+    "file": "/home/alumno/Programacion/Proyecto/ascii-test/src/drawlib.c",
+    "output": "/home/alumno/Programacion/Proyecto/ascii-test/build/drawlib.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-g",
+      "-Isrc",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/alumno/Programacion/Proyecto/ascii-test",
+    "file": "/home/alumno/Programacion/Proyecto/ascii-test/src/main.c",
+    "output": "/home/alumno/Programacion/Proyecto/ascii-test/build/main.o"
+  }
+]
